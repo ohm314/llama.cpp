@@ -22,6 +22,20 @@
 #include "ggml.h"
 #include "llama.h"
 
+// This block enables compilation of the code with and without LIKWID in place
+#ifdef LIKWID_PERFMON
+#include <likwid-marker.h>
+#else
+#define LIKWID_MARKER_INIT
+#define LIKWID_MARKER_THREADINIT
+#define LIKWID_MARKER_SWITCH
+#define LIKWID_MARKER_REGISTER(regionTag)
+#define LIKWID_MARKER_START(regionTag)
+#define LIKWID_MARKER_STOP(regionTag)
+#define LIKWID_MARKER_CLOSE
+#define LIKWID_MARKER_GET(regionTag, nevents, events, time, count)
+#endif
+
 #ifdef _WIN32
 #    define WIN32_LEAN_AND_MEAN
 #    ifndef NOMINMAX
@@ -1821,7 +1835,7 @@ int main(int argc, char ** argv) {
 #if defined(__SANITIZE_ADDRESS__) || defined(__SANITIZE_THREAD__)
     fprintf(stderr, "warning: sanitizer enabled, performance may be affected\n");
 #endif
-
+    LIKWID_MARKER_INIT;
     // initialize backends
     ggml_backend_load_all();
 
@@ -2015,6 +2029,8 @@ int main(int argc, char ** argv) {
     }
 
     llama_backend_free();
+
+    LIKWID_MARKER_CLOSE;
 
     return 0;
 }

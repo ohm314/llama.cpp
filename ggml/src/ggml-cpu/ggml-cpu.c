@@ -41,6 +41,19 @@
 #ifdef GGML_USE_OPENMP
 #include <omp.h>
 #endif
+// This block enables compilation of the code with and without LIKWID in place
+#ifdef LIKWID_PERFMON
+#include <likwid-marker.h>
+#else
+#define LIKWID_MARKER_INIT
+#define LIKWID_MARKER_THREADINIT
+#define LIKWID_MARKER_SWITCH
+#define LIKWID_MARKER_REGISTER(regionTag)
+#define LIKWID_MARKER_START(regionTag)
+#define LIKWID_MARKER_STOP(regionTag)
+#define LIKWID_MARKER_CLOSE
+#define LIKWID_MARKER_GET(regionTag, nevents, events, time, count)
+#endif
 
 #if defined(__ARM_FEATURE_SVE) || defined(__ARM_FEATURE_MATMUL_INT8)
 #undef GGML_USE_LLAMAFILE
@@ -1202,7 +1215,7 @@ static void ggml_compute_forward_mul_mat_one_chunk(
 void ggml_compute_forward_mul_mat(
         const struct ggml_compute_params * params,
               struct ggml_tensor * dst) {
-
+    LIKWID_MARKER_START("ggml_compute_forward_mul_mat");
     const struct ggml_tensor * src0 = dst->src[0];
     const struct ggml_tensor * src1 = dst->src[1];
 
@@ -1256,6 +1269,7 @@ void ggml_compute_forward_mul_mat(
                                      src1->type,
                                      dst->type))
                     goto UseGgmlGemm1;
+        LIKWID_MARKER_STOP("ggml_compute_forward_mul_mat");
         return;
     }
 UseGgmlGemm1:;
@@ -1324,6 +1338,7 @@ UseGgmlGemm1:;
                                      vec_dot_type,
                                      dst->type))
                     goto UseGgmlGemm2;
+        LIKWID_MARKER_STOP("ggml_compute_forward_mul_mat");
         return;
     }
 UseGgmlGemm2:;
@@ -1391,6 +1406,7 @@ UseGgmlGemm2:;
 
         current_chunk = atomic_fetch_add_explicit(&params->threadpool->current_chunk, 1, memory_order_relaxed);
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_mul_mat");
 }
 
 // ggml_compute_forward_mul_mat_id

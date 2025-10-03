@@ -66,6 +66,12 @@ endif()
 option(LLAMA_ALL_WARNINGS           "llama: enable all compiler warnings"                   ON)
 option(LLAMA_ALL_WARNINGS_3RD_PARTY "llama: enable all compiler warnings in 3rd party libs" OFF)
 
+option(LIKWID_PROFILING "Link against likwid for performance profiling" OFF)
+if (LIKWID_PROFILING)
+    message(STATUS "Building with LikWID profiling support")
+    find_package(likwid REQUIRED )
+endif()
+
 # build
 option(LLAMA_FATAL_WARNINGS "llama: enable -Werror flag" OFF)
 
