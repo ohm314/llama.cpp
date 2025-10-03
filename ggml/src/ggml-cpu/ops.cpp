@@ -10,6 +10,20 @@
 #include <float.h>
 #include <algorithm>
 
+// This block enables compilation of the code with and without LIKWID in place
+#ifdef LIKWID_PERFMON
+#include <likwid-marker.h>
+#else
+#define LIKWID_MARKER_INIT
+#define LIKWID_MARKER_THREADINIT
+#define LIKWID_MARKER_SWITCH
+#define LIKWID_MARKER_REGISTER(regionTag)
+#define LIKWID_MARKER_START(regionTag)
+#define LIKWID_MARKER_STOP(regionTag)
+#define LIKWID_MARKER_CLOSE
+#define LIKWID_MARKER_GET(regionTag, nevents, events, time, count)
+#endif
+
 // ggml_compute_forward_dup
 
 static void ggml_compute_forward_dup_same_cont(
@@ -1156,6 +1170,7 @@ static void ggml_compute_forward_dup_q(
 void ggml_compute_forward_dup(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    //LIKWID_MARKER_START("ggml_compute_forward_dup");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -1186,6 +1201,7 @@ void ggml_compute_forward_dup(
                 GGML_ABORT("fatal error");
             }
     }
+    //LIKWID_MARKER_STOP("ggml_compute_forward_dup");
 }
 
 // ggml_compute_forward_add
@@ -1269,6 +1285,7 @@ static void ggml_compute_forward_add_q_f32(
 void ggml_compute_forward_add(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_add");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -1309,6 +1326,7 @@ void ggml_compute_forward_add(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_add");
 }
 
 // ggml_compute_forward_add_id
@@ -1367,6 +1385,7 @@ static void ggml_compute_forward_add_id_f32(
 void ggml_compute_forward_add_id(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_add_id");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -1380,6 +1399,7 @@ void ggml_compute_forward_add_id(
                 GGML_ABORT("unsupported type for ggml_compute_forward_add_id: %s", ggml_type_name(src0->type));
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_add_id");
 }
 
 // ggml_compute_forward_add1
@@ -1694,6 +1714,7 @@ static void ggml_compute_forward_add1_bf16_bf16(
 void ggml_compute_forward_add1(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_add1");
 
     const ggml_tensor * src0 = dst->src[0];
     const ggml_tensor * src1 = dst->src[1];
@@ -1758,6 +1779,7 @@ void ggml_compute_forward_add1(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_add1");
 }
 
 // ggml_compute_forward_acc
@@ -1845,6 +1867,7 @@ static void ggml_compute_forward_acc_f32(
 void ggml_compute_forward_acc(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_acc");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -1883,6 +1906,7 @@ void ggml_compute_forward_acc(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_acc");
 }
 
 // ggml_compute_forward_sum
@@ -1988,6 +2012,7 @@ static void ggml_compute_forward_sum_bf16(
 void ggml_compute_forward_sum(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_sum");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2009,6 +2034,7 @@ void ggml_compute_forward_sum(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_sum");
 }
 
 // ggml_compute_forward_sum_rows
@@ -2049,6 +2075,7 @@ static void ggml_compute_forward_sum_rows_f32(
 void ggml_compute_forward_sum_rows(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_sum_rows");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2062,6 +2089,7 @@ void ggml_compute_forward_sum_rows(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_sum_rows");
 }
 
 // ggml_compute_forward_mean
@@ -2106,6 +2134,7 @@ static void ggml_compute_forward_mean_f32(
 void ggml_compute_forward_mean(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_mean");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2119,6 +2148,7 @@ void ggml_compute_forward_mean(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_mean");
 }
 
 // ggml_compute_forward_argmax
@@ -2154,6 +2184,7 @@ static void ggml_compute_forward_argmax_f32(
 void ggml_compute_forward_argmax(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_argmax");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2167,6 +2198,7 @@ void ggml_compute_forward_argmax(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_argmax");
 }
 
 // ggml_compute_forward_count_equal
@@ -2234,6 +2266,7 @@ static void ggml_compute_forward_count_equal_i32(
 void ggml_compute_forward_count_equal(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_count_equal");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2247,6 +2280,7 @@ void ggml_compute_forward_count_equal(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_count_equal");
 }
 
 // ggml_compute_forward_repeat
@@ -2345,6 +2379,7 @@ static void ggml_compute_forward_repeat_f16(
 void ggml_compute_forward_repeat(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_repeat");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2371,6 +2406,7 @@ void ggml_compute_forward_repeat(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_repeat");
 }
 
 // ggml_compute_forward_repeat_back
@@ -2436,6 +2472,7 @@ static void ggml_compute_forward_repeat_back_f32(
 void ggml_compute_forward_repeat_back(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_repeat_back");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2449,6 +2486,7 @@ void ggml_compute_forward_repeat_back(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_repeat_back");
 }
 
 // ggml_compute_forward_concat
@@ -2628,6 +2666,7 @@ static void ggml_compute_forward_concat_f32(
 void ggml_compute_forward_concat(
     const ggml_compute_params * params,
     ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_concat");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2652,6 +2691,7 @@ void ggml_compute_forward_concat(
                 ggml_compute_forward_concat_any(params, dst);
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_concat");
 }
 
 // ggml_compute_forward_gelu
@@ -2738,6 +2778,7 @@ static void ggml_compute_forward_gelu_f16(
 static void ggml_compute_forward_gelu(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_gelu");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2755,6 +2796,7 @@ static void ggml_compute_forward_gelu(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_gelu");
 }
 
 // ggml_compute_forward_gelu_erf
@@ -2841,6 +2883,7 @@ static void ggml_compute_forward_gelu_erf_f16(
 static void ggml_compute_forward_gelu_erf(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_gelu_erf");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2858,6 +2901,7 @@ static void ggml_compute_forward_gelu_erf(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_gelu_erf");
 }
 
 // ggml_compute_forward_gelu_quick
@@ -2944,6 +2988,7 @@ static void ggml_compute_forward_gelu_quick_f16(
 static void ggml_compute_forward_gelu_quick(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_gelu_quick");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -2961,6 +3006,7 @@ static void ggml_compute_forward_gelu_quick(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_gelu_quick");
 }
 
 // ggml_compute_forward_silu
@@ -3047,6 +3093,7 @@ static void ggml_compute_forward_silu_f16(
 static void ggml_compute_forward_silu(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_silu");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3064,6 +3111,7 @@ static void ggml_compute_forward_silu(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_silu");
 }
 // ggml_compute_forward_leaky_relu
 
@@ -3130,6 +3178,7 @@ static void ggml_compute_forward_leaky_relu_f16(
 void ggml_compute_forward_leaky_relu(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_leaky_relu");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3147,6 +3196,7 @@ void ggml_compute_forward_leaky_relu(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_leaky_relu");
 }
 
 // ggml_compute_forward_silu_back
@@ -3241,6 +3291,7 @@ static void ggml_compute_forward_silu_back_f16(
 void ggml_compute_forward_silu_back(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_silu_back");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3258,6 +3309,7 @@ void ggml_compute_forward_silu_back(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_silu_back");
 }
 
 // ggml_compute_forward_reglu
@@ -3384,6 +3436,7 @@ static void ggml_compute_forward_reglu_f16(
 static void ggml_compute_forward_reglu(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_silu_back");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3401,6 +3454,7 @@ static void ggml_compute_forward_reglu(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_silu_back");
 }
 
 // ggml_compute_forward_geglu
@@ -3527,6 +3581,7 @@ static void ggml_compute_forward_geglu_f16(
 static void ggml_compute_forward_geglu(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_geglu");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3544,6 +3599,7 @@ static void ggml_compute_forward_geglu(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_geglu");
 }
 
 // ggml_compute_forward_swiglu
@@ -3670,6 +3726,7 @@ static void ggml_compute_forward_swiglu_f16(
 static void ggml_compute_forward_swiglu(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_swiglu");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3687,6 +3744,7 @@ static void ggml_compute_forward_swiglu(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_swiglu");
 }
 
 // ggml_compute_forward_swiglu_oai
@@ -3761,6 +3819,7 @@ static void ggml_compute_forward_swiglu_oai_f32(
 static void ggml_compute_forward_swiglu_oai(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_swiglu_oai");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3774,6 +3833,7 @@ static void ggml_compute_forward_swiglu_oai(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_swiglu_oai");
 }
 
 // ggml_compute_forward_geglu_erf
@@ -3900,6 +3960,7 @@ static void ggml_compute_forward_geglu_erf_f16(
 static void ggml_compute_forward_geglu_erf(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_geglu_erf");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -3917,6 +3978,7 @@ static void ggml_compute_forward_geglu_erf(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_geglu_erf");
 }
 
 // ggml_compute_forward_geglu_quick
@@ -4043,6 +4105,7 @@ static void ggml_compute_forward_geglu_quick_f16(
 static void ggml_compute_forward_geglu_quick(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_geglu_quick");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4060,6 +4123,7 @@ static void ggml_compute_forward_geglu_quick(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_geglu_quick");
 }
 
 // ggml_compute_forward_norm
@@ -4118,6 +4182,7 @@ static void ggml_compute_forward_norm_f32(
 void ggml_compute_forward_norm(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_norm");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4131,6 +4196,7 @@ void ggml_compute_forward_norm(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_norm");
 }
 
 // ggml_compute_forward_group_rms_norm
@@ -4189,6 +4255,7 @@ static void ggml_compute_forward_rms_norm_f32(
 void ggml_compute_forward_rms_norm(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_rms_norm");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4202,6 +4269,7 @@ void ggml_compute_forward_rms_norm(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_rms_norm");
 }
 
 static void ggml_compute_forward_rms_norm_back_f32(
@@ -4364,6 +4432,7 @@ static void ggml_compute_forward_rms_norm_back_f32(
 void ggml_compute_forward_rms_norm_back(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_rms_norm_back");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4377,6 +4446,7 @@ void ggml_compute_forward_rms_norm_back(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_rms_norm_back");
 }
 
 // ggml_compute_forward_group_norm
@@ -4459,6 +4529,7 @@ static void ggml_compute_forward_group_norm_f32(
 void ggml_compute_forward_group_norm(
     const ggml_compute_params * params,
     ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_group_norm");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4472,6 +4543,7 @@ void ggml_compute_forward_group_norm(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_group_norm");
 }
 
 // ggml_compute_forward_l2_norm
@@ -4522,6 +4594,7 @@ static void ggml_compute_forward_l2_norm_f32(
 void ggml_compute_forward_l2_norm(
     const ggml_compute_params * params,
     ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_l2_norm");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4535,6 +4608,7 @@ void ggml_compute_forward_l2_norm(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_l2_norm");
 }
 
 // ggml_compute_forward_out_prod
@@ -4752,6 +4826,7 @@ static void ggml_compute_forward_out_prod_q_f32(
 void ggml_compute_forward_out_prod(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_out_prod");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4795,6 +4870,7 @@ void ggml_compute_forward_out_prod(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_out_prod");
 }
 
 // ggml_compute_forward_scale
@@ -4854,6 +4930,7 @@ static void ggml_compute_forward_scale_f32(
 void ggml_compute_forward_scale(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_scale");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -4867,6 +4944,7 @@ void ggml_compute_forward_scale(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_scale");
 }
 
 // ggml_compute_forward_set
@@ -5016,6 +5094,7 @@ static void ggml_compute_forward_set_i32(
 void ggml_compute_forward_set(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_set");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -5058,6 +5137,7 @@ void ggml_compute_forward_set(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_set");
 }
 
 // ggml_compute_forward_cpy
@@ -5288,6 +5368,7 @@ static void ggml_compute_forward_get_rows_f32(
 void ggml_compute_forward_get_rows(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_get_rows");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -5354,6 +5435,7 @@ void ggml_compute_forward_get_rows(
     //    printf("\n");
     //    exit(0);
     //}
+    LIKWID_MARKER_STOP("ggml_compute_forward_get_rows");
 }
 
 static void ggml_compute_forward_set_rows_f32(
@@ -5409,6 +5491,7 @@ static void ggml_compute_forward_set_rows_f32(
 void ggml_compute_forward_set_rows(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_set_rows");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -5422,6 +5505,7 @@ void ggml_compute_forward_set_rows(
                 GGML_ABORT("src0->type = %d (%s) not supported", src0->type, ggml_type_name(src0->type));
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_set_rows");
 }
 
 // ggml_compute_forward_get_rows_back
@@ -5495,6 +5579,7 @@ static void ggml_compute_forward_get_rows_back_f32(
 void ggml_compute_forward_get_rows_back(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_set_rows_back");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -5530,6 +5615,7 @@ void ggml_compute_forward_get_rows_back(
     //    printf("\n");
     //    exit(0);
     //}
+    LIKWID_MARKER_STOP("ggml_compute_forward_set_rows_back");
 }
 
 // ggml_compute_forward_diag
@@ -5577,6 +5663,7 @@ static void ggml_compute_forward_diag_f32(
 void ggml_compute_forward_diag(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_diag");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -5590,6 +5677,7 @@ void ggml_compute_forward_diag(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_diag");
 }
 
 // ggml_compute_forward_diag_mask_inf
@@ -5647,6 +5735,7 @@ static void ggml_compute_forward_diag_mask_f32(
 void ggml_compute_forward_diag_mask_inf(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_diag_mask_inf");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -5660,11 +5749,13 @@ void ggml_compute_forward_diag_mask_inf(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_diag_mask_inf");
 }
 
 void ggml_compute_forward_diag_mask_zero(
         const ggml_compute_params * params,
         ggml_tensor * dst) {
+    LIKWID_MARKER_START("ggml_compute_forward_diag_mask_zero");
 
     const ggml_tensor * src0 = dst->src[0];
 
@@ -5678,6 +5769,7 @@ void ggml_compute_forward_diag_mask_zero(
                 GGML_ABORT("fatal error");
             }
     }
+    LIKWID_MARKER_STOP("ggml_compute_forward_diag_mask_zero");
 }
 
 // ggml_compute_forward_soft_max

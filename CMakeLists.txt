@@ -70,6 +70,7 @@ option(LIKWID_PROFILING "Link against likwid for performance profiling" OFF)
 if (LIKWID_PROFILING)
     message(STATUS "Building with LikWID profiling support")
     find_package(likwid REQUIRED )
+    add_compile_definitions(LIKWID_PERFMON)
 endif()
 
 # build
